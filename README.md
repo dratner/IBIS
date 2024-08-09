@@ -8,14 +8,23 @@ This app uses Twilio for text message communication and uses the [Twilio Go Help
 Any volunteer can text the system using the following messages:
 
 ```on``` - this tells the system to forward relevant messages
+
 ```off``` - this tells the system to stop forwarding messages
+
 ```status``` - replies with your current status (on/off)
+
 ```add <keyword>``` - adds a keyword for filtering
+
 ```remove <keyword>``` - removes a keyword for filtering
-```all`` - overrides filtering and forwards all messages (wildcard)
+
+```all``` - overrides filtering and forwards all messages (wildcard)
+
 ```keywords``` - lists your current keywords
+
 ```register <number>``` - adds a new volunteer with the given number
+
 ```delete <number>``` - removes a volunteer with the given number
+
 
 ## Environment Variables
 
