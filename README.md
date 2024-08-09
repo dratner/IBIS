@@ -28,6 +28,8 @@ Any volunteer can text the system using the following messages:
 
 ## Environment Variables
 
-TWILIO_AUTH_TOKEN: The auth token issued by Twilio
-IBIS_INBOUND_NUMBER: The inbound phone number for text messages
-IBIS_BASE_URL: The base URL of the app
+```TWILIO_AUTH_TOKEN``` - The auth token issued by Twilio
+
+```IBIS_INBOUND_NUMBER``` - The inbound phone number for text messages
+
+```IBIS_BASE_URL``` - The base URL of the app
