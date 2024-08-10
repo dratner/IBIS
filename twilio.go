@@ -29,7 +29,7 @@ func handleSMS(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Received message from %s: %s", from, body)
 
 	// Send thank you message using Twilio API
-	sendThankYouMessage(from)
+	go SMSRouter(from, body)
 
 	// Respond to Twilio with TwiML
 	twiml := TwiMLResponse{Message: "Thank you for your message!"}
@@ -37,7 +37,7 @@ func handleSMS(w http.ResponseWriter, r *http.Request) {
 	xml.NewEncoder(w).Encode(twiml)
 }
 
-func sendThankYouMessage(to string) {
+func SendMessage(to string, body string) {
 	client := twilio.NewRestClientWithParams(twilio.ClientParams{
 		Username: Conf.TwilioAccountSID,
 		Password: Conf.TwilioAccountToken,
@@ -46,7 +46,7 @@ func sendThankYouMessage(to string) {
 	params := &twilioApi.CreateMessageParams{}
 	params.SetTo(to)
 	params.SetFrom(Conf.TwilioPhoneNumber)
-	params.SetBody("Thanks from IBIS!")
+	params.SetBody(body)
 
 	_, err := client.Api.CreateMessage(params)
 	if err != nil {

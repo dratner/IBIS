@@ -25,11 +25,15 @@ Any volunteer can text the system using the following messages:
 
 ```delete <number>``` - removes a volunteer with the given number
 
+```block <number>``` - blocks a spammer
+
+```unblock <number>``` - unblocks a spammer
+
 
 ## Environment Variables
 
-```TWILIO_AUTH_TOKEN``` - The auth token issued by Twilio
+```TWILIO_ACCOUNT_SID``` - The account SID issued by Twilio
 
-```IBIS_INBOUND_NUMBER``` - The inbound phone number for text messages
+```TWILIO_ACCOUNT_TOKEN``` - The secret token for the account issued by Twilio
 
-```IBIS_BASE_URL``` - The base URL of the app
+```TWILIO_ACCOUNT_NUMBER``` - The inbound phone number for text messages
