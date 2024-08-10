@@ -1,4 +1,6 @@
 # IBIS
+![IBIS image](static/IBIS.png)
+
 IBIS - The Injured Bird Information System 
 
 This app uses Twilio for text message communication and uses the [Twilio Go Helper Library](https://www.twilio.com/en-us/blog/introducing-twilio-go-helper-library)
