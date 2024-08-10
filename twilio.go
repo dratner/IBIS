@@ -39,14 +39,14 @@ func handleSMS(w http.ResponseWriter, r *http.Request) {
 
 func sendThankYouMessage(to string) {
 	client := twilio.NewRestClientWithParams(twilio.ClientParams{
-		Username: twilioAccountSid,
-		Password: twilioAuthToken,
+		Username: Conf.TwilioAccountSID,
+		Password: Conf.TwilioAccountToken,
 	})
 
 	params := &twilioApi.CreateMessageParams{}
 	params.SetTo(to)
-	params.SetFrom(twilioPhoneNumber)
-	params.SetBody("Thank you for your message!")
+	params.SetFrom(Conf.TwilioPhoneNumber)
+	params.SetBody("Thanks from IBIS!")
 
 	_, err := client.Api.CreateMessage(params)
 	if err != nil {
