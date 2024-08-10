@@ -3,7 +3,7 @@
 
 IBIS - The Injured Bird Information System 
 
-This app was developed to assist volunteers with the Lake County Forest Preserve manage their text alerts about injured birds. See LICENSE before using.
+This app was developed to assist volunteers with the Lake County Forest Preserve manage their text alerts about injured birds. See [LICENSE](/LICENSE) before using.
 
 This app uses Twilio for text message communication and uses the [Twilio Go Helper Library](https://www.twilio.com/en-us/blog/introducing-twilio-go-helper-library)
 
