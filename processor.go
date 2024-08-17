@@ -60,7 +60,7 @@ func SMSRouter(from string, body string) {
 type Location struct {
 	City  string `json:"city"`
 	State string `json:"state"`
-	Zip   string `json:"zip"`
+	Zip   string `json:"zipcode"`
 }
 
 type MsgData struct {
@@ -68,7 +68,7 @@ type MsgData struct {
 }
 
 const prompt = `
-Please examine the following text message which relates to a bird or other animal in distress. Do your best to determine which towns or cities in Illinois or Southern Wisconsin this request for assistance refers to. Please reply with a list of the cities, states, and, if possible, zipcodes.
+Please examine the following text message which relates to a bird or other animal in distress. Do your best to determine which towns or cities in Illinois or Southern Wisconsin this request for assistance refers to. Please reply with a list of each city, state, and the associated zipcode.
 
 Your response must be in the form of a call to the attached function.
 
