@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,6 +17,7 @@ type Config struct {
 
 var (
 	Conf Config
+	DB   *sql.DB
 )
 
 const (
@@ -55,6 +57,12 @@ func main() {
 	Conf.TwilioAccountToken = os.Getenv("TWILIO_ACCOUNT_TOKEN")
 	Conf.TwilioPhoneNumber = os.Getenv("TWILIO_ACCOUNT_NUMBER")
 	Conf.Port = ":8080"
+
+	DB, err := ConnectDatabase()
+	if err != nil {
+		log.Fatalf("could not connect to database: %v", err)
+	}
+	defer DB.Close()
 
 	http.HandleFunc("/", handleRoot)
 	http.HandleFunc("/health", handleHealth)
