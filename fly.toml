@@ -22,7 +22,7 @@ primary_region = 'ord'
   processes = ['app']
 
 [deploy]
-  release_command = 'bash -l -c "migrate -source file://migrations -database $DATABASE_URL up"'
+  release_command = 'bash -l -c "migrate -verbose -source file://migrations -database $DATABASE_URL up"'
 
 [[vm]]
   memory = '1gb'

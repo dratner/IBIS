@@ -1,4 +1,6 @@
 -- Up Migration
+BEGIN;
+
 CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
     uuid CHAR(36) NOT NULL,
@@ -15,3 +17,5 @@ CREATE TABLE messages (
 
 -- Create index on uuid
 CREATE INDEX idx_messages_uuid ON messages (uuid);
+
+COMMIT;

@@ -34,5 +34,11 @@ test: build
 clean:
 	rm -f $(BINARY_NAME)
 
+db:
+	fly postgres connect -a ibisdb
+
+ssh:
+	fly ssh console
+
 # Phony targets
-.PHONY: all build run test clean
+.PHONY: all build run test clean db ssh
