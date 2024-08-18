@@ -69,6 +69,40 @@ func LoadMessageByUUID(db *sql.DB, uuid string) (*Message, error) {
 	return &m, nil
 }
 
+func LoadAllMessages(db *sql.DB) ([]Message, error) {
+	query := `
+		SELECT id, uuid, message, city, state, zipcode, caller, contact, created, updated, deleted
+		FROM messages
+		WHERE deleted IS NULL
+		ORDER BY created DESC
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var messages []Message
+	for rows.Next() {
+		var m Message
+		err := rows.Scan(
+			&m.ID, &m.UUID, &m.Message, &m.City, &m.State, &m.Zipcode,
+			&m.Caller, &m.Contact, &m.Created, &m.Updated, &m.Deleted,
+		)
+		if err != nil {
+			return nil, err
+		}
+		messages = append(messages, m)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return messages, nil
+}
+
 func (m *Message) Save(db *sql.DB) error {
 	if m.UUID == "" {
 		m.UUID = uuid.New().String()

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,7 +11,7 @@ import (
 	"github.com/dratner/gogpt"
 )
 
-func SMSRouter(from string, body string) {
+func SMSRouter(from string, body string, db *sql.DB) {
 	words := strings.Fields(body)
 
 	cmd, arg := "", ""
@@ -48,11 +49,31 @@ func SMSRouter(from string, body string) {
 	default:
 		log.Printf("Caller %s has sent a message: %s", from, body)
 		data, err := ExtractData(body)
+		msg := new(Message)
+		msg.Caller = from
+		msg.Message = body
 		if err != nil {
 			log.Printf("could not extract data: %v", err)
 		} else {
 			log.Printf("extracted data: %+v", data)
+			for _, loc := range data.Locations {
+				msg.City = sql.NullString{String: loc.City, Valid: true}
+				msg.State = sql.NullString{String: strings.ToUpper(loc.State[:2]), Valid: true}
+				msg.Zipcode = sql.NullString{String: loc.Zip, Valid: true}
+				err := msg.Save(db)
+				if err != nil {
+					log.Printf("could not save message to database: %v", err)
+				}
+			}
+			if len(data.Locations) > 0 {
+				return
+			}
 		}
+		err = msg.Save(db)
+		if err != nil {
+			log.Printf("could not save message to database: %v", err)
+		}
+
 		// SendMessage(from, "Thanks from IBIS!")
 	}
 }
