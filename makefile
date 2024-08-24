@@ -21,6 +21,7 @@ build:
 	$(GOFMT)
 	$(GOMOD)
 	$(GOBUILD) -o $(BINARY_NAME)
+	migrate -source file://migrations -database ${IBIS_DATABASE_URL} up
 
 # Run the application
 run: build

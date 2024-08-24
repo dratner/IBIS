@@ -18,11 +18,11 @@ primary_region = 'ord'
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ['app']
 
 [deploy]
-  release_command = 'bash -l -c "migrate -verbose -source file://migrations -database $DATABASE_URL up"'
+  release_command = 'bash -l -c "migrate -source file://migrations -database $DATABASE_URL up"'
 
 [[vm]]
   memory = '1gb'
