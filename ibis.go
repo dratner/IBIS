@@ -87,7 +87,16 @@ func handleStatic(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleOptIn(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("templates/optin.tpl")
+	handleTemplate(w, r, "optin.tpl", nil)
+}
+
+func handleAbout(w http.ResponseWriter, r *http.Request) {
+	handleTemplate(w, r, "about.tpl", nil)
+}
+
+func handleTemplate(w http.ResponseWriter, r *http.Request, tfile string, data interface{}) {
+
+	tmpl, err := template.ParseFiles("templates/" + tfile)
 	if err != nil {
 		log.Printf("Error parsing template: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -116,7 +125,7 @@ func main() {
 	}
 	defer db.Close()
 
-	http.HandleFunc("/", handleRoot)
+	http.HandleFunc("/", handleAbout)
 	http.HandleFunc("/health", handleHealth)
 	http.HandleFunc("/optin", handleOptIn)
 	http.HandleFunc("/static/", handleStatic)
