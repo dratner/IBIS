@@ -4,7 +4,13 @@
 <p class="text-blue-700 text-sm mb-6 text-center">
     Thank you for volunteering for the IBIS Project to help injured birds. When you submit this form you will be entered into our volunteer database and you'll receive SMS notifications of birds you can assist.
 </p>
-<form class="space-y-4">
+<form class="space-y-4" method="POST" action="/optin_process">
+<div>
+<label for="name" class="block text-sm font-medium text-blue-700">Name</label>
+<input type="tel" id="phone" name="name" required 
+    placeholder="Jane Doe"
+    class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+</div>
 <div>
 <label for="phone" class="block text-sm font-medium text-blue-700">Phone Number</label>
 <input type="tel" id="phone" name="phone" required 

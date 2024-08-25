@@ -2,11 +2,15 @@ package main
 
 import (
 	"bytes"
+	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"text/template"
 )
 
@@ -138,20 +142,55 @@ func handleTemplate(w http.ResponseWriter, r *http.Request, tfile string, data i
 	}
 }
 
-func handleTemplateOld(w http.ResponseWriter, r *http.Request, tfile string, data interface{}) {
+func optInProcessHandler(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
 
-	tmpl, err := template.ParseFiles("templates/" + tfile)
-	if err != nil {
-		log.Printf("Error parsing template: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "Error parsing form", http.StatusBadRequest)
+			return
+		}
 
-	err = tmpl.Execute(w, nil)
-	if err != nil {
-		log.Printf("Error executing template: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		name := r.FormValue("name")
+		phone := r.FormValue("phone")
+		agreeStr := r.FormValue("agree")
+
+		reg := regexp.MustCompile(`\D`)
+		phone = reg.ReplaceAllString(phone, "")
+		phone = strings.TrimPrefix(phone, "1")
+
+		agree := false
+		if agreeStr == "on" {
+			agree = true
+		}
+
+		log.Printf("Opt In Name: %s Phone: %s Agree: %t", name, phone, agree)
+
+		if name == "" || phone == "" || !agree {
+			http.Error(w, "Invalid data", http.StatusBadRequest)
+			return
+		}
+
+		p := new(Person)
+		p.Name = name
+		p.Phone = phone
+		p.OnDuty = sql.NullBool{Bool: false, Valid: true}
+		p.Preferences = json.RawMessage(`{}`)
+
+		err = p.Save(db)
+		if err != nil {
+			log.Printf("could not save data %v", err)
+			http.Error(w, "Could not save opt in", http.StatusInternalServerError)
+			return
+		}
+
+		// Process the extracted variables
+
+		handleTemplate(w, r, "thanks.tpl", nil)
 	}
 }
 
@@ -177,6 +216,8 @@ func main() {
 	http.HandleFunc("/static/", handleStatic)
 	http.HandleFunc("/sms", smsHandler(db))
 	http.HandleFunc("/messages", messagesHandler(db))
+	//http.HandleFunc("/optin_process", handleOptInProcess)
+	http.HandleFunc("/optin_process", optInProcessHandler(db))
 
 	log.Printf("Server is running on port %s", Conf.Port)
 	log.Fatal(http.ListenAndServe(Conf.Port, nil))
