@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/http"
@@ -23,11 +24,6 @@ var (
 const (
 	Version = "0.1.2"
 )
-
-func handleRoot(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("IBIS - Injured Bird Information System v" + Version))
-}
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
@@ -94,7 +90,55 @@ func handleAbout(w http.ResponseWriter, r *http.Request) {
 	handleTemplate(w, r, "about.tpl", nil)
 }
 
+func handleTerms(w http.ResponseWriter, r *http.Request) {
+	handleTemplate(w, r, "terms.tpl", nil)
+}
+
+func handlePrivacy(w http.ResponseWriter, r *http.Request) {
+	handleTemplate(w, r, "privacy.tpl", nil)
+}
+
 func handleTemplate(w http.ResponseWriter, r *http.Request, tfile string, data interface{}) {
+
+	type Content struct {
+		Content string
+	}
+
+	var c Content
+
+	tmpl, err := template.ParseFiles("templates/partials/" + tfile)
+	if err != nil {
+		log.Printf("Error parsing partial template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	var buf bytes.Buffer
+
+	err = tmpl.Execute(&buf, data)
+	if err != nil {
+		log.Printf("Error executing template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	c.Content = buf.String()
+
+	page, err := template.ParseFiles("templates/page.tpl")
+	if err != nil {
+		log.Printf("Error parsing page template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	err = page.Execute(w, c)
+	if err != nil {
+		log.Printf("Error executing template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+}
+
+func handleTemplateOld(w http.ResponseWriter, r *http.Request, tfile string, data interface{}) {
 
 	tmpl, err := template.ParseFiles("templates/" + tfile)
 	if err != nil {
@@ -128,6 +172,8 @@ func main() {
 	http.HandleFunc("/", handleAbout)
 	http.HandleFunc("/health", handleHealth)
 	http.HandleFunc("/optin", handleOptIn)
+	http.HandleFunc("/terms", handleTerms)
+	http.HandleFunc("/privacy", handlePrivacy)
 	http.HandleFunc("/static/", handleStatic)
 	http.HandleFunc("/sms", smsHandler(db))
 	http.HandleFunc("/messages", messagesHandler(db))
